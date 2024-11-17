@@ -5,16 +5,18 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustNothing"
     tools:context=".InicioFragment">
 
     <TextView
         android:id="@+id/tvInicio"
         android:layout_width="407dp"
         android:layout_height="197dp"
+        android:layout_marginBottom="255dp"
         android:text="@string/appCadastroEsporte"
         android:textAlignment="viewStart"
         android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="279dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.edu.fateczl.crudjogador.controller.TimeController;
+import br.edu.fateczl.crudjogador.model.Time;
+import br.edu.fateczl.crudjogador.persistence.TimeDao;
 
 
 public class TimeFragment extends Fragment {
@@ -24,6 +33,8 @@ public class TimeFragment extends Fragment {
     private EditText etCodigoTime, etNomeTime, etCidadeTime;
     private Button btnBuscarTime, btnInserirTime, btnModificarTime, btnExcluirTime, btnListarTime;
     private TextView tvListarTime;
+
+    private TimeController tCont;
 
     public TimeFragment() {
         super();
@@ -46,6 +57,99 @@ public class TimeFragment extends Fragment {
         tvListarTime = view.findViewById(R.id.tvListarTime);
         tvListarTime.setMovementMethod(new ScrollingMovementMethod());
 
+        tCont = new TimeController(new TimeDao(view.getContext()));
+
+        btnInserirTime.setOnClickListener(op -> acaoInserir());
+        btnModificarTime.setOnClickListener(op -> acaoModificar());
+        btnExcluirTime.setOnClickListener(op -> acaoExcluir());
+        btnBuscarTime.setOnClickListener(op -> acaoBuscar());
+        btnListarTime.setOnClickListener(op -> acaoListar());
+
+
         return view;
+    }
+
+    private void acaoInserir() {
+        Time time = montaTime();
+        try {
+            tCont.inserir(time);
+            Toast.makeText(view.getContext(), "Time inserido com sucesso", Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        limpaCampos();
+    }
+
+    private void acaoModificar() {
+        Time time = montaTime();
+        try {
+            tCont.modificar(time);
+            Toast.makeText(view.getContext(), "Time atualizado com sucesso", Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        limpaCampos();
+    }
+
+    private void acaoExcluir() {
+        Time time = montaTime();
+        try {
+            tCont.deletar(time);
+            Toast.makeText(view.getContext(), "Time excluído com sucesso",
+                    Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        limpaCampos();
+    }
+
+    private void acaoBuscar() {
+        Time time = montaTime();
+        try {
+            time = tCont.buscar(time);
+            if (time.getNome() != null) {
+                preencheCampos(time);
+            } else {
+                Toast.makeText(view.getContext(), "Time não encontrado",
+                        Toast.LENGTH_LONG).show();
+                limpaCampos();
+            }
+        } catch (SQLException e) {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void acaoListar() {
+        try {
+            List<Time> times = tCont.listar();
+            StringBuffer buffer = new StringBuffer();
+            for (Time t: times) {
+                buffer.append(t.toString() + "\n");
+            }
+            tvListarTime.setText(buffer.toString());
+        } catch (SQLException e) {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private Time montaTime() {
+        Time t = new Time();
+        t.setCodigo(Integer.parseInt(etCodigoTime.getText().toString()));
+        t.setNome((etNomeTime.getText().toString()));
+        t.setCidade((etCidadeTime.getText().toString()));
+
+        return t;
+    }
+
+    private void preencheCampos(Time t) {
+        etCodigoTime.setText(String.valueOf(t.getCodigo()));
+        etNomeTime.setText(t.getNome());
+        etCidadeTime.setText(t.getCidade());
+    }
+
+    private void limpaCampos(){
+        etCodigoTime.setText("");
+        etNomeTime.setText("");
+        etCidadeTime.setText("");
     }
 }

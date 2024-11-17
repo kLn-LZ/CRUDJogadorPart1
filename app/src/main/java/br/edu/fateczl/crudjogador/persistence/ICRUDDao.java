@@ -1,4 +1,4 @@
-package br.edu.fateczl.crudjogador.controller;
+package br.edu.fateczl.crudjogador.persistence;
 
 import java.sql.SQLException;
 import java.util.List;
